@@ -1,0 +1,35 @@
+version: '25.0.3'
+services:
+  mongodb:
+    container_name: mongo.db
+    image: mongo
+    ports:
+      - '27019:27017'
+    volumes:
+      - mongo-data:/var/lib/mongodb/data
+    networks:
+      - exam_app
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: Admin@123$$
+  sqlserver:
+    container_name: sqlserver.db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - '1433:1433'
+    volumes:
+      - sqlserver-data:/var/lib/sqlserver/data
+    networks:
+    - exam_app
+    restart: always
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: Admin@123$$
+
+networks:
+  exam_app:
+    driver: bridge
+volumes:
+  mongo-data:
+  sqlserver-data:
