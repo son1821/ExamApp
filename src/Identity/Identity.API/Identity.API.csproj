@@ -30,6 +30,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\IdentityServer4.EntityFramework.Storage\IdentityServer4.EntityFramework.Storage.csproj" />
     <ProjectReference Include="..\..\..\IdentityServer4.EntityFramework\IdentityServer4.EntityFramework.csproj" />
+    <ProjectReference Include="..\..\Examination\Examination.Infrastructure\Examination.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
