@@ -17,6 +17,7 @@ using Serilog;
 using System;
 using System.Reflection;
 using IdentityServer4.EntityFramework.Storage;
+using Examination.Infrastructure.SeedWork;
 
 
 try
@@ -49,6 +50,7 @@ try
             Version = "v1"
         });
     });
+    builder.Services.Configure<ExamSettings>(builder.Configuration);
 
     //Register Dbcontext
     builder.Services.AddDbContext<AppDbContext>(options =>
