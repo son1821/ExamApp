@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Examination.Application.Queries.GetHomeExamList
 {
-    internal class GetHomeExamListQueryHandler : IRequestHandler<GetHomeExamListQuery, IEnumerable<ExamDto>>
+    public class GetHomeExamListQueryHandler : IRequestHandler<GetHomeExamListQuery, IEnumerable<ExamDto>>
     {
         private readonly IExamRepository _examRepository;
         private readonly IClientSessionHandle _clientSessionHandle;

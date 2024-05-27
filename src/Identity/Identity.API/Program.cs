@@ -50,7 +50,7 @@ try
             Version = "v1"
         });
     });
-    builder.Services.Configure<ExamSettings>(builder.Configuration);
+    
 
     //Register Dbcontext
     builder.Services.AddDbContext<AppDbContext>(options =>
