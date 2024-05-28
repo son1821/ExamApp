@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Examination.Application.Commands
+namespace Examination.Application.Commands.V1.StarExam
 {
     public class StartExamCommandHandler : IRequestHandler<StartExamCommand, bool>
     {

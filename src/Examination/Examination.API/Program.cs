@@ -1,7 +1,7 @@
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
-using Examination.Application.Commands;
+using Examination.Application.Commands.V1.StarExam;
 using Examination.Application.Mapping;
-using Examination.Application.Queries.GetHomeExamList;
+using Examination.Application.Queries.V1.GetHomeExamList;
 using Examination.Domain.AggregateModels.ExamAggregate;
 using Examination.Domain.AggregateModels.ExamResultAggregate;
 using Examination.Domain.AggregateModels.QuestionAggregate;
@@ -15,6 +15,17 @@ using MongoDB.Driver;
 using System.Net.NetworkInformation;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Register Versioning
+builder.Services.AddApiVersioning(options =>
+{
+    options.ReportApiVersions = true;
+    
+}).AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
 
 
 //Register Mongodb
@@ -53,6 +64,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Examination.API", Version = "v1" });
+    c.SwaggerDoc("v2", new OpenApiInfo { Title = "Examination.API", Version = "v2" });
 });
 builder.Services.AddScoped(c => c.GetRequiredService<IMongoClient>().StartSession());
 builder.Services.Configure<ExamSettings>(builder.Configuration);
@@ -70,7 +82,13 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Examination.API v1"));
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Examination.API v1");
+    
+        c.SwaggerEndpoint("/swagger/v2/swagger.json", "Examination.API v2");
+
+    });
 }
 
 app.UseHttpsRedirection();
