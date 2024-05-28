@@ -1,4 +1,7 @@
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using Examination.Application.Commands;
+using Examination.Application.Mapping;
+using Examination.Application.Queries.GetHomeExamList;
 using Examination.Domain.AggregateModels.ExamAggregate;
 using Examination.Domain.AggregateModels.ExamResultAggregate;
 using Examination.Domain.AggregateModels.QuestionAggregate;
@@ -6,8 +9,10 @@ using Examination.Domain.AggregateModels.UserAggregate;
 using Examination.Infrastructure.Repositories;
 using Examination.Infrastructure.SeedWork;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using System.Net.NetworkInformation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +32,10 @@ builder.Services.AddAutoMapper(ass =>
 {
     ass.AddProfile(new MappingProfile());
 });
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssemblies(typeof(StartExamCommandHandler).Assembly, typeof(GetHomeExamListQueryHandler).Assembly);
+});
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {
@@ -45,7 +54,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Examination.API", Version = "v1" });
 });
-
+builder.Services.AddScoped(c => c.GetRequiredService<IMongoClient>().StartSession());
 builder.Services.Configure<ExamSettings>(builder.Configuration);
 //Register Repositories
 builder.Services.AddTransient<IExamRepository,ExamRepository>();
@@ -61,34 +70,17 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Examination.API v1"));
 }
 
 app.UseHttpsRedirection();
+app.UseCors("CorsPolicy");
+app.UseAuthorization();
 
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
+app.MapControllers();
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
