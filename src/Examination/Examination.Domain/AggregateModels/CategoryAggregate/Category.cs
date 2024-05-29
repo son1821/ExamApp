@@ -10,6 +10,7 @@ namespace Examination.Domain.AggregateModels.CategoryAggregate
 {
     public class Category : Entity
     {
+        public Category(string id, string name, string urlPath) => (Id, Name, UrlPath) = (id, name, urlPath);
         [BsonElement("name")]
         public string Name { get; set; } = string.Empty;
         [BsonElement("urlPath")]

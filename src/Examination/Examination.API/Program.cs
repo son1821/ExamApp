@@ -7,6 +7,7 @@ using Examination.Domain.AggregateModels.ExamAggregate;
 using Examination.Domain.AggregateModels.ExamResultAggregate;
 using Examination.Domain.AggregateModels.QuestionAggregate;
 using Examination.Domain.AggregateModels.UserAggregate;
+using Examination.Infrastructure;
 using Examination.Infrastructure.Repositories;
 using Examination.Infrastructure.SeedWork;
 using HealthChecks.UI.Client;
@@ -15,6 +16,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using Serilog;
@@ -128,8 +131,22 @@ try
 
     Log.Information("Apply configuration web host ({ApplicationContext})...", appName);
 
+
+
     var app = builder.Build();
- 
+    
+    //Seeding data mongodb
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        var logger = services.GetRequiredService<ILogger<ExamMongoDbSeeding>>();
+        var settings = services.GetRequiredService<IOptions<ExamSettings>>();
+        var mongoClient = services.GetRequiredService<IMongoClient>();
+        new ExamMongoDbSeeding()
+            .SeedAsync(mongoClient, settings, logger)
+            .Wait();
+    }
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {

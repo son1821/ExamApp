@@ -129,25 +129,31 @@ try
     app.UseAuthorization();
 
     Log.Information("Applying migrations ({ApplicationContext})...",appName);
-    app.MigrateDbContext<PersistedGrantDbContext>((_, __) => { })
-        .MigrateDbContext<AppDbContext>((context, services) =>
+
+ 
+
+        // Seed data for AppDbContext
+
+        app.MigrateDbContext<AppDbContext>((context, services) =>
         {
-            var env = services.GetService<IWebHostEnvironment>();
             var logger = services.GetService<ILogger<AppDbContextSeed>>();
             var settings = services.GetService<IOptions<AppSettings>>();
-
-            new AppDbContextSeed()
-            .SeedAsync(context, env, logger, settings)
-            .Wait();
-        })
-        .MigrateDbContext<ConfigurationDbContext>((context, services) =>
-        {
-
-            new ConfigurationDbContextSeed()
-
-            .SeedAsync(context, app.Configuration)
-            .Wait();
+            var env = services.GetService<IWebHostEnvironment>();
+            new AppDbContextSeed().SeedAsync(context, env, logger, settings).Wait();
         });
+
+        // Seed data for ConfigurationDbContext
+
+        app.MigrateDbContext<ConfigurationDbContext>((context, services) =>
+        {
+           
+            new ConfigurationDbContextSeed().SeedAsync(context, app.Configuration).Wait();
+        });
+
+        // Seed data for PersistedGrantDbContext
+
+        app.MigrateDbContext<PersistedGrantDbContext>((_, __) => { });
+    
 
     app.MapHealthChecks("/hc", new HealthCheckOptions
     {
