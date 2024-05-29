@@ -18,23 +18,28 @@ using System;
 using System.Reflection;
 using IdentityServer4.EntityFramework.Storage;
 using Examination.Infrastructure.SeedWork;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using System.Text.Json;
+using System.Net.Mime;
+using DocumentFormat.OpenXml.Wordprocessing;
 
-
+var appName = Assembly.GetEntryAssembly().GetName().Name;
 try
 {
    
     var builder = WebApplication.CreateBuilder(args);
     var connectionString = builder.Configuration.GetConnectionString("AppDbContext");
-    var migrationsAssembly = typeof(Program).GetType().Assembly.GetName().Name;
-    
-
+ 
     Log.Logger = new LoggerConfiguration()
+        .Enrich.WithProperty("ApplicationContext", appName)
         .MinimumLevel.Information()
         .Enrich.FromLogContext()
         .WriteTo.Console()
         .ReadFrom.Configuration(builder.Configuration)
         .CreateLogger();
-    Log.Information("Configuring web host ...");
+    Log.Information("Configuring web host ({ApplicationContext}) ...",appName);
     builder.Host.UseSerilog();
     // Add services to the container.
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -80,13 +85,36 @@ try
                    options.ConfigureDbContext = builder => builder.UseSqlServer(connectionString);
                })
                .Services.AddTransient<IProfileService, ProfileService>();
+
+    //Health check
+    builder.Services.AddHealthChecks()
+            .AddCheck("self", () => HealthCheckResult.Healthy())
+            .AddSqlServer(
+                        connectionString,
+                        name: "IdentityDB-check",
+                        tags: new string[] { "identitydb" });
+
+
+    //Health check ui
+    builder.Services.AddHealthChecksUI(opt =>
+    {
+        opt.SetEvaluationTimeInSeconds(15); //time in seconds between check
+        opt.MaximumHistoryEntriesPerEndpoint(60); //maximum history of checks
+        opt.SetApiMaxActiveRequests(1); //api requests concurrency
+
+        opt.AddHealthCheckEndpoint("Identity API", "/hc"); //map health check api
+
+    })
+                    .AddInMemoryStorage();
+
     builder.Services.Configure<AppSettings>(builder.Configuration);
     builder.Services.AddSingleton<AppDbContextSeed>();
     builder.Services.AddSingleton<ConfigurationDbContextSeed>();
+
+
+
     var app = builder.Build();
-
     
-
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
@@ -100,7 +128,7 @@ try
     app.UseIdentityServer();
     app.UseAuthorization();
 
-    Log.Information("Applying migrations...");
+    Log.Information("Applying migrations ({ApplicationContext})...",appName);
     app.MigrateDbContext<PersistedGrantDbContext>((_, __) => { })
         .MigrateDbContext<AppDbContext>((context, services) =>
         {
@@ -121,28 +149,39 @@ try
             .Wait();
         });
 
-
-
-    var summaries = new[]
+    app.MapHealthChecks("/hc", new HealthCheckOptions
     {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-    app.MapGet("/weatherforecast", () =>
+        Predicate = _ => true,
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
+    app.MapHealthChecks("/liveness", new HealthCheckOptions
     {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-            new WeatherForecast
-            (
-                DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                Random.Shared.Next(-20, 55),
-                summaries[Random.Shared.Next(summaries.Length)]
-            ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
-    Log.Information("Starting web host ...");
+        Predicate = r => r.Name.Contains("self")
+    });
+
+    app.MapHealthChecks("/hc-details",
+                            new HealthCheckOptions
+                            {
+                                ResponseWriter = async (context, report) =>
+                                {
+                                    var result = JsonSerializer.Serialize(
+                                        new
+                                        {
+                                            status = report.Status.ToString(),
+                                            monitors = report.Entries.Select(e => new { key = e.Key, value = Enum.GetName(typeof(HealthStatus), e.Value.Status) })
+                                        });
+                                    context.Response.ContentType = MediaTypeNames.Application.Json;
+                                    await context.Response.WriteAsync(result);
+                                }
+                            }
+                        );
+    app.MapHealthChecksUI(opt => opt.UIPath = "/hc-ui");
+
+
+
+
+
+    Log.Information("Starting web host ({ApplicationContext}) ...",appName);
     app.Run();
     return 0;
 }
@@ -157,7 +196,3 @@ finally
 }
 
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
