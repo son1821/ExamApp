@@ -1,5 +1,6 @@
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Wordprocessing;
+using Examination.API.Filters;
 using Examination.Application.Commands.V1.StarExam;
 using Examination.Application.Mapping;
 using Examination.Application.Queries.V1.GetHomeExamList;
@@ -11,6 +12,8 @@ using Examination.Infrastructure;
 using Examination.Infrastructure.Repositories;
 using Examination.Infrastructure.SeedWork;
 using HealthChecks.UI.Client;
+using Humanizer.Configuration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -100,7 +103,44 @@ try
     {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "Examination.API", Version = "v1" });
         c.SwaggerDoc("v2", new OpenApiInfo { Title = "Examination.API", Version = "v2" });
+        c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.OAuth2,
+            Flows = new OpenApiOAuthFlows()
+            {
+                Implicit = new OpenApiOAuthFlow()
+                {
+                    AuthorizationUrl = new Uri($"{builder.Configuration.GetValue<string>("IdentityUrl")}/connect/authorize"),
+                    TokenUrl = new Uri($"{builder.Configuration.GetValue<string>("IdentityUrl")}/connect/token"),
+                    Scopes = new Dictionary<string, string>()
+                            {
+                                {"full_access", "Full Access"},
+                            }
+                }
+            }
+        });
+        c.OperationFilter<AuthorizeCheckOperationFilter>();
     });
+
+    var identityUrl = builder.Configuration.GetValue<string>("IdentityUrl");
+    //Configuration Authentication
+    builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(options =>
+    {
+        options.Authority = identityUrl;
+        options.RequireHttpsMetadata = false;
+        options.Audience = "exam_api";
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+        {
+            ValidateIssuerSigningKey = true,
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
+
 
     //Health check
     builder.Services.AddHealthChecks()
