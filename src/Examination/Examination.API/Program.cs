@@ -9,25 +9,38 @@ using Examination.Domain.AggregateModels.QuestionAggregate;
 using Examination.Domain.AggregateModels.UserAggregate;
 using Examination.Infrastructure.Repositories;
 using Examination.Infrastructure.SeedWork;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using Serilog;
+using System.Net.Mime;
 using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Text.Json;
 
 
 
-string appName = Assembly.GetEntryAssembly().GetName().Name;
+var appName = Assembly.GetEntryAssembly().GetName().Name;
 try
 {
 
    
 
     var builder = WebApplication.CreateBuilder(args);
+
     
+    var user = builder.Configuration.GetValue<string>("DatabaseSettings:User");
+    var password = builder.Configuration.GetValue<string>("DatabaseSettings:Password");
+    var server = builder.Configuration.GetValue<string>("DatabaseSettings:Server");
+    var databaseName = builder.Configuration.GetValue<string>("DatabaseSettings:DatabaseName");
+    var mongodbConnectionString = "mongodb://" + user + ":" + password + "@" + server + "/" + databaseName + "?authSource=admin";
+
+
     //Configuration Serilog
     Log.Logger = new LoggerConfiguration()
         .MinimumLevel.Information()
@@ -55,12 +68,7 @@ try
     //Register Mongodb
     builder.Services.AddSingleton<IMongoClient>(c =>
     {
-        var user = builder.Configuration.GetValue<string>("DatabaseSettings:User");
-        var password = builder.Configuration.GetValue<string>("DatabaseSettings:Password");
-        var server = builder.Configuration.GetValue<string>("DatabaseSettings:Server");
-        var databaseName = builder.Configuration.GetValue<string>("DatabaseSettings:DatabaseName");
-        return new MongoClient(
-            "mongodb://" + user + ":" + password + "@" + server + "/" + databaseName + "?authSource=admin");
+         return new MongoClient(mongodbConnectionString);
     });
 
     builder.Services.AddAutoMapper(ass =>
@@ -90,6 +98,26 @@ try
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "Examination.API", Version = "v1" });
         c.SwaggerDoc("v2", new OpenApiInfo { Title = "Examination.API", Version = "v2" });
     });
+
+    //Health check
+    builder.Services.AddHealthChecks()
+            .AddCheck("self", () => HealthCheckResult.Healthy())
+            .AddMongoDb(mongodbConnectionString: mongodbConnectionString,
+                        name: "mongo",
+                        failureStatus: HealthStatus.Unhealthy);
+
+    //Health check ui
+    builder.Services.AddHealthChecksUI(opt =>
+    {
+            opt.SetEvaluationTimeInSeconds(15); //time in seconds between check
+            opt.MaximumHistoryEntriesPerEndpoint(60); //maximum history of checks
+            opt.SetApiMaxActiveRequests(1); //api requests concurrency
+
+            opt.AddHealthCheckEndpoint("Exam API", "/hc"); //map health check api
+            
+    })
+                    .AddInMemoryStorage();
+
     builder.Services.AddScoped(c => c.GetRequiredService<IMongoClient>().StartSession());
     builder.Services.Configure<ExamSettings>(builder.Configuration);
     //Register Repositories
@@ -119,10 +147,34 @@ try
     app.UseCors("CorsPolicy");
     app.UseAuthorization();
 
-    var summaries = new[]
+    app.MapHealthChecks("/hc", new HealthCheckOptions
     {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+        Predicate = _ => true,
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
+    app.MapHealthChecks("/liveness", new HealthCheckOptions
+    {
+        Predicate = r => r.Name.Contains("self")
+    });
+
+    app.MapHealthChecks("/hc-details",
+                            new HealthCheckOptions
+                            {
+                                ResponseWriter = async (context, report) =>
+                                {
+                                    var result = JsonSerializer.Serialize(
+                                        new
+                                        {
+                                            status = report.Status.ToString(),
+                                            monitors = report.Entries.Select(e => new { key = e.Key, value = Enum.GetName(typeof(HealthStatus), e.Value.Status) })
+                                        });
+                                    context.Response.ContentType = MediaTypeNames.Application.Json;
+                                    await context.Response.WriteAsync(result);
+                                }
+                            }
+                        );
+    app.MapHealthChecksUI(opt => opt.UIPath = "/hc-ui");
+
     app.MapControllers();
 
     app.Run();
