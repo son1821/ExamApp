@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using System.Text.Json;
 using System.Net.Mime;
 using DocumentFormat.OpenXml.Wordprocessing;
+using Identity.API.Models;
 
 var appName = Assembly.GetEntryAssembly().GetName().Name;
 try
@@ -124,6 +125,7 @@ try
 
     app.UseHttpsRedirection();
     app.UseRouting();
+    app.UseStaticFiles();
     app.UseAuthentication();
     app.UseIdentityServer();
     app.UseAuthorization();
@@ -184,8 +186,11 @@ try
     app.MapHealthChecksUI(opt => opt.UIPath = "/hc-ui");
 
 
-
-
+    app.MapControllerRoute(
+        name:"default",
+        pattern:"{controller=Home}/{action=Index}/{id?}"
+        );
+    app.MapControllers();
 
     Log.Information("Starting web host ({ApplicationContext}) ...",appName);
     app.Run();

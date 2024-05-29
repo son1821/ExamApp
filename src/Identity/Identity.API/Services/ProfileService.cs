@@ -1,4 +1,5 @@
-﻿using IdentityModel;
+﻿using Identity.API.Models;
+using IdentityModel;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
