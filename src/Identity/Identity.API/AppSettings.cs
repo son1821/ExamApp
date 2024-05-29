@@ -2,7 +2,7 @@
 {
     public class AppSettings
     {
-        public string ExamWebAppClient {  get; set; }
+        public string ExamWebAppClient { get; set; }
 
         public string ExamWebAdminClient { get; set; }
 
