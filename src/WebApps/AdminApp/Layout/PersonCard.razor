@@ -1,16 +1,21 @@
 ﻿﻿<MudCard Elevation="0" Square="true" Class="@Class" Style="@Style">
     <MudCardHeader>
         <CardHeaderAvatar>
-            <MudAvatar Image="images/avatar_jonny.jpg" />
+            <MudAvatar >
+                <MudImage Src="images /IMG_1816.JPG">
+
+                </MudImage>
+            </MudAvatar>
         </CardHeaderAvatar>
         <CardHeaderContent>
-            <MudText Typo="Typo.body2">Jonny Larsson</MudText>
+            <MudText Typo="Typo.body2">@FullName</MudText>
             <MudText Typo="Typo.caption">IT Consultant</MudText>
         </CardHeaderContent>
     </MudCardHeader>
 </MudCard>
 
 @code {
-    [Parameter] public string Class { get; set; }
-    [Parameter] public string Style { get; set; }
+    [Parameter] public string Class { get; set; } = String.Empty;
+    [Parameter] public string Style { get; set; } = String.Empty;
+    [Parameter] public string FullName { get; set; } = String.Empty;
 }
