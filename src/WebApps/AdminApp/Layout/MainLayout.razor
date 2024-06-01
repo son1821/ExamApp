@@ -1,4 +1,8 @@
 ﻿@using AdminApp.Theme
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager;
 @inherits LayoutComponentBase
 
 
@@ -34,11 +38,11 @@
         <MudMenu AnchorOrigin="Origin.CenterLeft" Dense="true" Class="mt-1 ml-4">
             <ActivatorContent>
                 <MudAvatar>
-                    <MudImage Src="images/avatar_jonny.jpg" Alt="Avatar" />
+                    <MudImage Src="images/IMG_1816.JPG" Alt="Avatar" />
                 </MudAvatar>
             </ActivatorContent>
             <ChildContent>
-                <PersonCard Class="mt-n2" />
+                <PersonCard FullName = "@fullName" Class="mt-n2" />
                 <MudDivider Class="mb-2" />
                 <MudListItem Text="Account" Icon="@Icons.Material.Outlined.Person" Href="/personal/account" />
                 <MudListItem Text="Logout" Icon="@Icons.Material.Outlined.Login" Href="/pages/authentication/login" />
@@ -79,7 +83,7 @@
 
     public bool _drawerOpen = true;
     public bool _themeManagerOpen = false;
-
+    public string fullName = String.Empty;
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
@@ -95,9 +99,16 @@
         _themeManager = value;
         StateHasChanged();
     }
-
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        fullName = user.GetFullName();
+
+        if (!user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo($"{UrlConstants.Login}?returnUrl={Uri.EscapeDataString(NavigationManager.Uri)}");
+        }
         _themeManager.Theme = new MudBlazorAdminDashboard();
         _themeManager.DrawerClipMode = DrawerClipMode.Always;
         _themeManager.FontFamily = "Montserrat";
@@ -106,6 +117,7 @@
         _themeManager.DrawerElevation = 25;
         StateHasChanged();
     }
+   
 
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
 {
