@@ -10,7 +10,7 @@ namespace Identity.Admin.Configuration.Test
         {
         }
 
-        public override void ConfigureUIOptions(IdentityServer4AdminUIOptions options)
+        public  void ConfigureUIOptions(IdentityServer4AdminUIOptions options)
         {
             base.ConfigureUIOptions(options);
 

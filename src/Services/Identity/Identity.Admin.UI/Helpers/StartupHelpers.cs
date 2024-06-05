@@ -42,6 +42,7 @@ using Microsoft.AspNetCore.Hosting;
 using Identity.Admin.UI.Middlewares;
 using Microsoft.AspNetCore.Authorization;
 using Identity.Admin.EntityFramework.Configuration.Configuration;
+
 using Identity.Admin.EntityFramework.Configuration.SqlServer;
 using Identity.Shared.Configuration.Authentication;
 

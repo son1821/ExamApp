@@ -13,7 +13,7 @@ namespace Identity.Admin.Configuration.Database
             return databaseProvider.ProviderType switch
             {
                 DatabaseProviderType.SqlServer => typeof(SqlMigrationAssembly).GetTypeInfo().Assembly.GetName().Name,
-             
+                
                 _ => throw new ArgumentOutOfRangeException()
             };
         }

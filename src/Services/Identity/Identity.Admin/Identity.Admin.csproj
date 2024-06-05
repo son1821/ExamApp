@@ -40,15 +40,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Helpers\" />
-    <Folder Include="Logs\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Identity.Admin.BusinessLogic\Identity.Admin.BusinessLogic.csproj" />
     <ProjectReference Include="..\Identity.Admin.EntityFramework.SqlServer\Identity.Admin.EntityFramework.SqlServer.csproj" />
     <ProjectReference Include="..\Identity.Admin.UI\Identity.Admin.UI.csproj" />
     <ProjectReference Include="..\Identity.Shared\Identity.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="log\" />
+    <Folder Include="Helpers\" />
   </ItemGroup>
 
 </Project>

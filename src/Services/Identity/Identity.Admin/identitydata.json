@@ -9,10 +9,8 @@
       {
         "Username": "admin",
         "Password": "Admin@123$",
-        "Email": "admin@identity.com",
-        "Roles": [
-          "Administrator"
-        ],
+        "Email": "admin@example.com.vn",
+        "Roles": [ "Administrator" ],
         "Claims": [
           {
             "Type": "name",
