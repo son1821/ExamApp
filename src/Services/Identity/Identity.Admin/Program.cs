@@ -14,10 +14,9 @@ using Identity.Shared.Configuration.Helpers;
 
 namespace Identity.Admin
 {
-	public class Program
+    public class Program
     {
         private const string SeedArgs = "/seed";
-        private const string MigrateOnlyArgs = "/migrateonly";
 
         public static async Task Main(string[] args)
         {
@@ -33,17 +32,9 @@ namespace Identity.Admin
 
                 var host = CreateHostBuilder(args).Build();
 
-                var migrationComplete = await ApplyDbMigrationsWithDataSeedAsync(args, configuration, host);
-                if (args.Any(x => x == MigrateOnlyArgs))
-                {
-                    await host.StopAsync();
-                    if (!migrationComplete) {
-                        Environment.ExitCode = -1;
-                    }
+                await ApplyDbMigrationsWithDataSeedAsync(args, configuration, host);
 
-                    return;
-                }
-                await host.RunAsync();
+                host.Run();
             }
             catch (Exception ex)
             {
@@ -55,7 +46,7 @@ namespace Identity.Admin
             }
         }
 
-        private static async Task<bool> ApplyDbMigrationsWithDataSeedAsync(string[] args, IConfiguration configuration, IHost host)
+        private static async Task ApplyDbMigrationsWithDataSeedAsync(string[] args, IConfiguration configuration, IHost host)
         {
             var applyDbMigrationWithDataSeedFromProgramArguments = args.Any(x => x == SeedArgs);
             if (applyDbMigrationWithDataSeedFromProgramArguments) args = args.Except(new[] { SeedArgs }).ToArray();
@@ -64,7 +55,7 @@ namespace Identity.Admin
             var databaseMigrationsConfiguration = configuration.GetSection(nameof(DatabaseMigrationsConfiguration))
                 .Get<DatabaseMigrationsConfiguration>();
 
-            return await DbMigrationHelpers
+            await DbMigrationHelpers
                 .ApplyDbMigrationsWithDataSeedAsync<IdentityServerConfigurationDbContext, AdminIdentityDbContext,
                     IdentityServerPersistedGrantDbContext, AdminLogDbContext, AdminAuditLogDbContext,
                     IdentityServerDataProtectionDbContext, UserIdentity, UserIdentityRole>(host,
@@ -85,7 +76,7 @@ namespace Identity.Admin
 
             if (isDevelopment)
             {
-                configurationBuilder.AddUserSecrets<Startup>(true);
+                configurationBuilder.AddUserSecrets<Startup>();
             }
 
             var configuration = configurationBuilder.Build();
@@ -116,7 +107,7 @@ namespace Identity.Admin
 
                      if (env.IsDevelopment())
                      {
-                         configApp.AddUserSecrets<Startup>(true);
+                         configApp.AddUserSecrets<Startup>();
                      }
 
                      configurationRoot.AddAzureKeyVaultConfiguration(configApp);

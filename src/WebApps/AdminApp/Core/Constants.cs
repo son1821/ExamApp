@@ -8,8 +8,10 @@
 
         public class UrlConstants
         {
-            public const string Login = "/pages/authentication/login";
+            public const string Login = "/auth/login";
             public const string Dashboard = "/personal/dashboard";
+            public const string Categories = "/app/categories";
         }
-    
 }
+    
+

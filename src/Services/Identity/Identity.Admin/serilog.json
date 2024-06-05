@@ -12,21 +12,21 @@
             },
             {
                 "Name": "File",
-                "Args": {
-                    "path": "Logs/Identity_admin.txt",
-                    "rollingInterval": "Day"
-                }
+              "Args": {
+                "path": "Log/identity_admin.txt",
+                "rollingInterval": "Day"
+              }
             },
             {
                 "Name": "MSSqlServer",
-              "Args": {
-                "connectionString": "",
-                "tableName": "Log",
-                "columnOptionsSection": {
-                  "addStandardColumns": [ "LogEvent" ],
-                  "removeStandardColumns": [ "Properties" ]
+                "Args": {
+                    "connectionString": "",
+                    "tableName": "Log",
+                    "columnOptionsSection": {
+                        "addStandardColumns": [ "LogEvent" ],
+                        "removeStandardColumns": [ "Properties" ]
+                    }
                 }
-              }
             }
         ]
     }

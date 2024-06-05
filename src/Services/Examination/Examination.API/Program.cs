@@ -1,9 +1,10 @@
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Examination.API.Filters;
-using Examination.Application.Commands.V1.StarExam;
+using Examination.Application.Commands.V1.Exams.StarExam;
 using Examination.Application.Mapping;
-using Examination.Application.Queries.V1.GetHomeExamList;
+using Examination.Application.Queries.V1.Exams.GetHomeExamList;
+using Examination.Domain.AggregateModels.CategoryAggregate;
 using Examination.Domain.AggregateModels.ExamAggregate;
 using Examination.Domain.AggregateModels.ExamResultAggregate;
 using Examination.Domain.AggregateModels.QuestionAggregate;
@@ -168,6 +169,7 @@ try
     builder.Services.AddTransient<IExamResultRepository, ExamResultRepository>();
     builder.Services.AddTransient<IQuestionRepository, QuestionRepository>();
     builder.Services.AddTransient<IUserRepository, UserRepository>();
+    builder.Services.AddTransient<ICategoryRepository, CategoryRepository>(); 
 
     Log.Information("Apply configuration web host ({ApplicationContext})...", appName);
 

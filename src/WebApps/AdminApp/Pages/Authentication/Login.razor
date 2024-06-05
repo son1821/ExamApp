@@ -1,5 +1,5 @@
 ﻿@page "/"
-@page "/pages/authentication/login"
+@page "/auth/login"
 @layout LoginLayout
 @inject NavigationManager NavigationManager;
 @inject IAuthService AuthService;
@@ -25,11 +25,14 @@
 
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleLogin" Size="Size.Large" FullWidth="true">Sign In</MudButton>
 </EditForm>
+<MudOverlay Visible="loading" DarkBackground="true" Absolute="true">
+    <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+</MudOverlay>
 @code {
 
     LoginRequest model = new LoginRequest();
     string errorMsg = string.Empty;
-
+    bool loading = false;
     string Password { get; set; } = "BMWvBPJXZu";
 
     bool PasswordVisibility;
@@ -38,15 +41,17 @@
 
     async Task HandleLogin()
     {
-        var result = await AuthService.Login(model);
+        loading = true;
+        var result = await AuthService.LoginAsync(model);
         if (result.IsError == false)
         {
-            NavigationManager.NavigateTo("/personal/dashboard");
+            NavigationManager.NavigateTo(UrlConstants.Dashboard);
         }
         else
         {
             errorMsg = "Incorrect username or password";
         }
+        loading = false;
     }
 
     void TogglePasswordVisibility()

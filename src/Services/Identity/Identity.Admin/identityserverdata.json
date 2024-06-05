@@ -63,6 +63,37 @@
             "UserClaims": [ "role", "name" ]
           }
         ]
+      },
+      {
+        "Name": "identity_api",
+        "Scopes": [
+          {
+            "Name": "identity_api",
+            "DisplayName": "identity_api",
+            "Required": true,
+            "UserClaims": [ "role", "name" ]
+          }
+        ]
+      }
+    ],
+    "ApiScopes": [
+      {
+        "Name": "exam_api",
+        "DisplayName": "exam_api",
+        "Required": true,
+        "UserClaims": [
+          "role",
+          "name"
+        ]
+      },
+      {
+        "Name": "identity_api",
+        "DisplayName": "identity_api",
+        "Required": true,
+        "UserClaims": [
+          "role",
+          "name"
+        ]
       }
     ],
     "Clients": [
@@ -137,6 +168,17 @@
         "RedirectUris": [ "https://localhost:5002/swagger/oauth2-redirect.html" ],
         "AllowedScopes": [ "exam_api" ],
         "AllowedCorsOrigins": [ "https://localhost:5002" ]
+      },
+      {
+        "ClientId": "identity_api_swaggerui",
+        "ClientName": "Identity API Swagger UI",
+        "AllowedGrantTypes": [ "implicit" ],
+        "AllowAccessTokensViaBrowser": true,
+        "RequireClientSecret": false,
+        "RequirePkce": true,
+        "RedirectUris": [ "https://localhost:5003/swagger/oauth2-redirect.html" ],
+        "AllowedScopes": [ "exam_api" ],
+        "AllowedCorsOrigins": [ "https://localhost:5003" ]
       }
     ]
   }

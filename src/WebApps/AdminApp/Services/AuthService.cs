@@ -31,7 +31,7 @@ namespace AdminApp.Services
             _authenticationStateProvider = authenticationStateProvider;
 
         }
-        public async Task<TokenResponse> Login(LoginRequest loginRequest)
+        public async Task<TokenResponse> LoginAsync(LoginRequest loginRequest)
         {
             _disco = await _httpClient.GetDiscoveryDocumentAsync(
                _configuration["IdentityServerConfig:IdentityServerUrl"]);
@@ -71,7 +71,7 @@ namespace AdminApp.Services
             return response;
         }
 
-        public async Task Logout()
+        public async Task LogoutAsync()
         {
             await _sessionStorage.RemoveItemAsync(KeyConstants.AccessToken);
             await _sessionStorage.RemoveItemAsync(KeyConstants.RefreshToken);
