@@ -34,12 +34,12 @@ namespace Examination.Application.Queries.V1.Categories.GetCategoriesPaging
 
         public async Task<PagedList<CategoryDto>> Handle(GetCategoriesPagingQuery request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("BEGIN: GetHomeExamListQueryHandler");
+            _logger.LogInformation("BEGIN: GetCategoriesPagingQueryHandler");
 
             var result = await _categoryRepository.GetCategoriesPagingAsync(request.SearchKeyword, request.PageIndex, request.PageSize);
             var items = _mapper.Map<List<CategoryDto>>(result.Item1);
 
-            _logger.LogInformation("END: GetHomeExamListQueryHandler");
+            _logger.LogInformation("END: GetCategoriesPagingQueryHandler");
             return new PagedList<CategoryDto>(items, result.Item2, request.PageIndex, request.PageSize);
         }
     }

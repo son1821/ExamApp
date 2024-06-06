@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace Examination.Application.Commands.V1.Categories.DeleteCategory
 {
-    public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, bool>
+    public class DeleteQuestionCommandHandler : IRequestHandler<DeleteCategoryCommand, bool>
     {
         private readonly ICategoryRepository _categoryRepository;
-        private readonly ILogger<DeleteCategoryCommandHandler> _logger;
+        private readonly ILogger<DeleteQuestionCommandHandler> _logger;
 
-        public DeleteCategoryCommandHandler(
+        public DeleteQuestionCommandHandler(
                 ICategoryRepository categoryRepository,
-                ILogger<DeleteCategoryCommandHandler> logger
+                ILogger<DeleteQuestionCommandHandler> logger
             )
         {
             _categoryRepository = categoryRepository;
