@@ -1,5 +1,6 @@
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Wordprocessing;
+using Examination.API;
 using Examination.API.Filters;
 using Examination.Application.Commands.V1.Exams.StarExam;
 using Examination.Application.Mapping;
@@ -165,11 +166,7 @@ try
     builder.Services.AddScoped(c => c.GetRequiredService<IMongoClient>().StartSession());
     builder.Services.Configure<ExamSettings>(builder.Configuration);
     //Register Repositories
-    builder.Services.AddTransient<IExamRepository, ExamRepository>();
-    builder.Services.AddTransient<IExamResultRepository, ExamResultRepository>();
-    builder.Services.AddTransient<IQuestionRepository, QuestionRepository>();
-    builder.Services.AddTransient<IUserRepository, UserRepository>();
-    builder.Services.AddTransient<ICategoryRepository, CategoryRepository>(); 
+    builder.Services.RegisterCustomServices();
 
     Log.Information("Apply configuration web host ({ApplicationContext})...", appName);
 
@@ -203,6 +200,7 @@ try
     }
 
     app.UseHttpsRedirection();
+    app.UseAuthentication();
     app.UseCors("CorsPolicy");
     app.UseAuthorization();
 

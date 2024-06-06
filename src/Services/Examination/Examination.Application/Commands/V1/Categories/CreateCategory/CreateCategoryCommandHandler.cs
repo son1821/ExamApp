@@ -12,15 +12,15 @@ using System.Threading.Tasks;
 
 namespace Examination.Application.Commands.V1.Categories.CreateCategory
 {
-    public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, CategoryDto>
+    public class CreateQuestionCommandHandler : IRequestHandler<CreateCategoryCommand, CategoryDto>
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
-        private readonly ILogger<CreateCategoryCommandHandler> _logger;
+        private readonly ILogger<CreateQuestionCommandHandler> _logger;
 
-        public CreateCategoryCommandHandler(
+        public CreateQuestionCommandHandler(
                 ICategoryRepository categoryRepository,
-                ILogger<CreateCategoryCommandHandler> logger,
+                ILogger<CreateQuestionCommandHandler> logger,
                  IMapper mapper
             )
         {
