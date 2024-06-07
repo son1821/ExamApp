@@ -1,6 +1,7 @@
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Examination.API;
+using Examination.API.Extensions;
 using Examination.API.Filters;
 using Examination.Application.Commands.V1.Exams.StarExam;
 using Examination.Application.Mapping;
@@ -60,7 +61,10 @@ try
             .CreateLogger();
     builder.Host.UseSerilog();
     Log.Information("Starting web host ({ApplicationContext})...", appName);
-   
+
+
+    builder.Services.AddHttpContextAccessor();
+
     //Register Versioning
     builder.Services.AddApiVersioning(options =>
     {
@@ -198,12 +202,12 @@ try
 
         });
     }
-
+    app.UseErrorWrapping();
     app.UseHttpsRedirection();
     app.UseAuthentication();
     app.UseCors("CorsPolicy");
     app.UseAuthorization();
-
+    
     app.MapHealthChecks("/hc", new HealthCheckOptions
     {
         Predicate = _ => true,

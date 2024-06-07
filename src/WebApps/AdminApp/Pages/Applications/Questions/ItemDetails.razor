@@ -1,0 +1,94 @@
+﻿@page "/app/questions/details/{Id}"
+
+@using AutoMapper
+@using Examination.Domain.AggregateModels.QuestionAggregate
+@using Microsoft.Extensions.Logging
+@inject IQuestionService QuestionService
+@inject ILogger<ItemDetails> Logger
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+@inject IMapper _mapper
+
+
+<MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">@model.Content</MudText>
+<MudGrid>
+    <MudItem xs="12" sm="12" md="6">
+        <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+            <MudCard Elevation="25" Style="height:100%;">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">Please fill fully information</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent Class="px-5">
+                    <DataAnnotationsValidator />
+                    <MudTextField Label="Content" HelperText="Example: C# Programming"
+                                  @bind-Value="model.Content" For="@(() => model.Content)" />
+
+                    <MudTextField Label="QuestionTypeh" HelperText="Example: csharp-programming"
+                                  @bind-Value="model.QuestionType" For="@(() => model.QuestionType)" />
+                    <MudTextField Label="Level" HelperText="Example: csharp-programming"
+                                  @bind-Value="model.Level" For="@(() => model.Level)" />
+                    <MudTextField Label="Explain" HelperText="Example: csharp-programming"
+                                  @bind-Value="model.Explain" For="@(() => model.Explain)" />
+                    <MudTextField Label="CategoryId" HelperText="Example: csharp-programming"
+                                  @bind-Value="model.CategoryId" For="@(() => model.CategoryId)" />
+                    <MudTextField Label="Answers" HelperText="Example: csharp-programming"
+                                  @bind-Value="model.Answers" For="@(() => model.Answers)" />
+              
+
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Save</MudButton>
+                </MudCardActions>
+
+            </MudCard>
+        </EditForm>
+    </MudItem>
+</MudGrid>
+<MudOverlay Visible="loading" DarkBackground="true" Absolute="true">
+    <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+</MudOverlay>
+@code {
+    bool success;
+    bool loading = false;
+    [Parameter]
+    public string Id { set; get; }
+    UpdateQuestionRequest model = new UpdateQuestionRequest();
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadItemDetails(Id);
+    }
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        loading = true;
+        success = await QuestionService.UpdateAsync(model);
+        if (success)
+        {
+            Snackbar.Add("Update item success", Severity.Success);
+            NavigationManager.NavigateTo(UrlConstants.Categories);
+        }
+        else
+        {
+            Snackbar.Add("Create action is not success", Severity.Error);
+        }
+        loading = false;
+        StateHasChanged();
+    }
+    private async Task LoadItemDetails(string id)
+    {
+        var answers = _mapper.Map<List<AnswerDto>, IEnumerable<AnswerDto>>(model.Answers);
+        loading = true;
+        var item = await QuestionService.GetQuestionByIdAsync(Id);
+        model.Id = item.Id;
+        model.Content = item.Content;
+        answers = item.Answers ;
+        model.QuestionType = item.QuestionType;
+        model.Level = item.Level;
+        model.CategoryId = item.CategoryId;
+        model.Explain = item.Explain;
+        loading = false;
+    }
+
+}

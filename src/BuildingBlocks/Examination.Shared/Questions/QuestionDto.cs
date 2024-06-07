@@ -1,4 +1,4 @@
-﻿using Examination.Dtos.Enums;
+﻿using Examination.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,7 @@ namespace Examination.Shared.Questions
 {
     public class QuestionDto
     {
+        public string Id { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
 
         public QuestionType QuestionType { get; set; }
@@ -24,5 +25,6 @@ namespace Examination.Shared.Questions
         public DateTime DateCreated { get; set; }
 
         public string OwnerUserId { get; set; } = string.Empty;
+        public string CategoryName { get; set; } = string.Empty;
     }
 }

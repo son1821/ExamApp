@@ -1,0 +1,70 @@
+﻿@page "/app/questions/new"
+
+
+@using Microsoft.Extensions.Logging
+@inject IQuestionService QuestionService
+@inject ILogger<NewItem> Logger
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager;
+
+
+<MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Create Question</MudText>
+<MudGrid>
+    <MudItem xs="12" sm="12" md="6">
+        <EditForm Model="model" OnValidSubmit="OnValidSubmit">
+            <MudCard Elevation="25" Style="height:100%;">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">Please fill fully information</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent Class="px-5">
+                    <DataAnnotationsValidator />
+                    <MudTextField Label="Content" Required="true" RequiredError="Content is required" HelperText="Example: C# Programming"
+                                  @bind-Value="model.Content" For="@(() => model.Content)" />
+                    <MudTextField Label="QuestionType" Required="true" RequiredError="QuestionType is required" HelperText="Example: csharp-programming"
+                                  @bind-Value="model.QuestionType" For="@(() => model.QuestionType)" />
+                    <MudTextField Label="Level" Required="true" RequiredError="Level is required" HelperText="Example: csharp-programming"
+                                  @bind-Value="model.Level" For="@(() => model.Level)" />
+                    <MudTextField Label="QuestionType" Required="true" RequiredError="CategoryId is required" HelperText="Example: csharp-programming"
+                                  @bind-Value="model.CategoryId" For="@(() => model.CategoryId)" />
+                    <MudTextField Label="Answers" Required="true" RequiredError="Answers is required" HelperText="Example: csharp-programming"
+                                  @bind-Value="model.Answers" For="@(() => model.Answers)" />
+                    <MudTextField Label="Explain" Required="false"  HelperText="Example: csharp-programming"
+                                  @bind-Value="model.Explain" For="@(() => model.Explain)" />
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Save</MudButton>
+                </MudCardActions>
+
+            </MudCard>
+        </EditForm>
+    </MudItem>
+</MudGrid>
+<MudOverlay Visible="loading" DarkBackground="true" Absolute="true">
+    <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+</MudOverlay>
+@code {
+    bool success;
+    bool loading = false;
+    [Parameter]
+    public string Id { set; get; } = string.Empty;
+    CreateQuestionRequest model = new CreateQuestionRequest();
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        loading = true;
+        success = await QuestionService.CreateAsync(model);
+        if (success)
+        {
+            Snackbar.Add("Create new item success", Severity.Success);
+            NavigationManager.NavigateTo(UrlConstants.Questions);
+        }
+        else
+        {
+            Snackbar.Add("Create action is not success", Severity.Error);
+        }
+        loading = false;
+        StateHasChanged();
+    }
+}

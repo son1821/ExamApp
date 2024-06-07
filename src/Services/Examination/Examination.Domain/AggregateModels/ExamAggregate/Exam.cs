@@ -1,6 +1,6 @@
 ﻿using Examination.Domain.AggregateModels.QuestionAggregate;
 using Examination.Domain.SeedWork;
-using Examination.Dtos.Enums;
+using Examination.Shared.Enums;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;

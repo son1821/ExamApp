@@ -1,9 +1,9 @@
-﻿using Examination.Dtos.Enums;
+﻿using Examination.Shared.Enums;
 using Examination.Shared.Questions;
 using System.ComponentModel.DataAnnotations;
 
 
-namespace Examination.Dtos.Categories
+namespace Examination.Shared.Categories
 {
     public class CreateCategoryRequest
     {

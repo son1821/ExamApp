@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Examination.Shared.SeedWork;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Examination.Application.Commands.V1.Exams.StarExam
 {
-    public class StartExamCommand : IRequest<bool>
+    public class StartExamCommand : IRequest<ApiResult<bool>>
     {
         public string UserId { get; set; } = string.Empty;
 
