@@ -1,7 +1,7 @@
 ﻿using Examination.Domain.AggregateModels.CategoryAggregate;
 using Examination.Domain.AggregateModels.ExamAggregate;
 using Examination.Domain.AggregateModels.QuestionAggregate;
-using Examination.Dtos.Enums;
+using Examination.Shared.Enums;
 using Examination.Infrastructure.SeedWork;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

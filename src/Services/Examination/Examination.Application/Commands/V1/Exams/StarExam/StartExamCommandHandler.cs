@@ -1,4 +1,5 @@
 ﻿using Examination.Domain.AggregateModels.ExamResultAggregate;
+using Examination.Shared.SeedWork;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,20 +9,19 @@ using System.Threading.Tasks;
 
 namespace Examination.Application.Commands.V1.Exams.StarExam
 {
-    public class StartExamCommandHandler : IRequestHandler<StartExamCommand, bool>
+    public class StartExamCommandHandler : IRequestHandler<StartExamCommand, ApiResult<bool>>
     {
         private readonly IExamResultRepository _examResultRepository;
         public StartExamCommandHandler(IExamResultRepository examResultRepository)
         {
             _examResultRepository = examResultRepository;
         }
-        public async Task<bool> Handle(StartExamCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<bool>> Handle(StartExamCommand request, CancellationToken cancellationToken)
         {
             var examResult = await _examResultRepository.GetDetails(request.UserId, request.ExamId);
         
 
-            try
-            {
+            
                 if (examResult != null)
                 {
                     examResult.ExamStartDate = DateTime.Now;
@@ -35,14 +35,10 @@ namespace Examination.Application.Commands.V1.Exams.StarExam
                     examResult.StartExam(request.FirstName, request.LastName);
                     await _examResultRepository.InsertAsync(examResult);
                 }
-               
-                return true;
-            }
-            catch
-            {
-               
-                throw;
-            }
+
+                return new ApiSuccessResult<bool>(true, "Starting Exam");
+            
+          
         }
     }
 }

@@ -1,7 +1,8 @@
 ﻿using Amazon.Runtime.Internal.Util;
 using AutoMapper;
 using Examination.Domain.AggregateModels.ExamAggregate;
-using Examination.Dtos.Exams;
+using Examination.Shared.Exams;
+using Examination.Shared.SeedWork;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Examination.Application.Queries.V1.Exams.GetHomeExamList
 {
-    public class GetHomeExamListQueryHandler : IRequestHandler<GetHomeExamListQuery, IEnumerable<ExamDto>>
+    public class GetHomeExamListQueryHandler : IRequestHandler<GetHomeExamListQuery, ApiResult<IEnumerable<ExamDto>>>
     {
         private readonly IExamRepository _examRepository;
         private readonly IClientSessionHandle _clientSessionHandle;
@@ -30,7 +31,7 @@ namespace Examination.Application.Queries.V1.Exams.GetHomeExamList
             _logger = logger;
 
         }
-        public async Task<IEnumerable<ExamDto>> Handle(GetHomeExamListQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResult<IEnumerable<ExamDto>>> Handle(GetHomeExamListQuery request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("BEGIN:GetHomeExamListQueryHandler");
 
@@ -38,7 +39,7 @@ namespace Examination.Application.Queries.V1.Exams.GetHomeExamList
             var examDtos = _mapper.Map<IEnumerable<ExamDto>>(exams);
 
             _logger.LogInformation("END:GetHomeExamListQueryHandler");
-            return examDtos;
+            return new ApiSuccessResult<IEnumerable<ExamDto>>(examDtos);
         }
     }
 }

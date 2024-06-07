@@ -1,4 +1,5 @@
 ﻿using Examination.Domain.AggregateModels.CategoryAggregate;
+using Examination.Shared.SeedWork;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Examination.Application.Commands.V1.Categories.DeleteCategory
 {
-    public class DeleteQuestionCommandHandler : IRequestHandler<DeleteCategoryCommand, bool>
+    public class DeleteQuestionCommandHandler : IRequestHandler<DeleteCategoryCommand, ApiResult<bool>>
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly ILogger<DeleteQuestionCommandHandler> _logger;
@@ -24,25 +25,19 @@ namespace Examination.Application.Commands.V1.Categories.DeleteCategory
 
         }
 
-        public async Task<bool> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<bool>> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
-            var itemToUpdate = await _categoryRepository.GetCategoriesByIdAsync(request.Id);
-            if (itemToUpdate == null)
+            var itemToDelete = await _categoryRepository.GetCategoriesByIdAsync(request.Id);
+            if (itemToDelete == null)
             {
                 _logger.LogError($"Item is not found {request.Id}");
-                return false;
+                return new ApiErrorResult<bool>($"itemToDelete is not found {request.Id}");
             }
 
-            try
-            {
+            
                 await _categoryRepository.DeleteAsync(request.Id);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
+                return new ApiSuccessResult<bool>(true,"Delete Successful");
+            
         }
     }
 }

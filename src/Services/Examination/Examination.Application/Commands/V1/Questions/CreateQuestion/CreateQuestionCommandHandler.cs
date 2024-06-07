@@ -1,38 +1,43 @@
 ﻿using AutoMapper;
+using Examination.Application.Extenstions;
 using Examination.Domain.AggregateModels.QuestionAggregate;
 using Examination.Shared.Questions;
+using Examination.Shared.SeedWork;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 
 
 namespace Examination.Application.Commands.V1.Questions.CreateQuestion
 {
-    public class CreateQuestionCommandHandler : IRequestHandler<CreateQuestionCommand, QuestionDto>
+    public class CreateQuestionCommandHandler : IRequestHandler<CreateQuestionCommand, ApiResult<QuestionDto>>
     {
         private readonly IQuestionRepository _questionRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<CreateQuestionCommandHandler> _logger;
-
+        private readonly IHttpContextAccessor _httpContextAccessor;
         public CreateQuestionCommandHandler(
                 IQuestionRepository questionRepository,
                 ILogger<CreateQuestionCommandHandler> logger,
-                 IMapper mapper
+                IMapper mapper,
+                IHttpContextAccessor httpContextAccessor
             )
         {
             _questionRepository = questionRepository;
             _logger = logger;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
 
         }
 
-        public async Task<QuestionDto> Handle(CreateQuestionCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<QuestionDto>> Handle(CreateQuestionCommand request, CancellationToken cancellationToken)
         {
             var itemToAdd = await _questionRepository.GetQuestionsByIdAsync(request.Content);
-            if (itemToAdd != null)
+            if (itemToAdd?.Content != null)
             {
                 _logger.LogError($"Item name existed: {request.Content}");
-                return null;
+                return new ApiErrorResult<QuestionDto>($"itemToAdd is not found : {request.Content}");
             }
 
             var questionId = ObjectId.GenerateNewId().ToString();
@@ -44,17 +49,13 @@ namespace Examination.Application.Commands.V1.Questions.CreateQuestion
                                     request.Level,
                                     request.CategoryId,
                                     answers,
-                                    request.Explain, null);
-            try
-            {
+                                    request.Explain, _httpContextAccessor.GetUserId());
+          
                 await _questionRepository.InsertAsync(itemToAdd);
-                return _mapper.Map<Question, QuestionDto>(itemToAdd);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
+                var result = _mapper.Map<Question, QuestionDto>(itemToAdd);
+                return new ApiSuccessResult<QuestionDto>(result,"Create successful");
+            
+            
         }
     }
 }

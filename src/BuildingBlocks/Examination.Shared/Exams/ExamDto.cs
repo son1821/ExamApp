@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Examination.Dtos.Exams
+namespace Examination.Shared.Exams
 {
     public class ExamDto
     {

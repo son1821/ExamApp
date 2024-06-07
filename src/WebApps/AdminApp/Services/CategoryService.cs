@@ -1,6 +1,6 @@
 ﻿using AdminApp.Services.Interfaces;
-using Examination.Dtos.Categories;
-using Examination.Dtos.SeedWork;
+using Examination.Shared.Categories;
+using Examination.Shared.SeedWork;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Net.Http.Json;
 
@@ -48,7 +48,7 @@ namespace AdminApp.Services
             string url = QueryHelpers.AddQueryString("/api/v1/categories", queryStringParam);
 
             var result = await _httpClient.GetFromJsonAsync<PagedList<CategoryDto>>(url);
-            return result;
+            return result ?? new PagedList<CategoryDto>() ;
         }
 
         public async Task<bool> UpdateAsync(UpdateCategoryRequest request)

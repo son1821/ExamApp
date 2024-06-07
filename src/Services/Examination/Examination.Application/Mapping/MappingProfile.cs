@@ -3,8 +3,8 @@ using DocumentFormat.OpenXml.Drawing.Diagrams;
 
 using Examination.Domain.AggregateModels.ExamAggregate;
 using Examination.Domain.AggregateModels.QuestionAggregate;
-using Examination.Dtos.Categories;
-using Examination.Dtos.Exams;
+using Examination.Shared.Categories;
+using Examination.Shared.Exams;
 using Examination.Shared.Questions;
 using System;
 using System.Collections.Generic;
