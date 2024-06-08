@@ -80,14 +80,19 @@
     {
         var answers = _mapper.Map<List<AnswerDto>, IEnumerable<AnswerDto>>(model.Answers);
         loading = true;
-        var item = await QuestionService.GetQuestionByIdAsync(Id);
-        model.Id = item.Id;
-        model.Content = item.Content;
-        answers = item.Answers ;
-        model.QuestionType = item.QuestionType;
-        model.Level = item.Level;
-        model.CategoryId = item.CategoryId;
-        model.Explain = item.Explain;
+        var result = await QuestionService.GetQuestionByIdAsync(Id);
+        var category = result.ResultObj;
+        if (result.IsSuccessed)
+        {
+            model.Id = category.Id;
+            model.Content = category.Content;
+            answers = category.Answers;
+            model.QuestionType = category.QuestionType;
+            model.Level = category.Level;
+            model.CategoryId = category.CategoryId;
+            model.Explain = category.Explain;
+        }
+       
         loading = false;
     }
 

@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\BuildingBlocks\Examination.Shared\Examination.Shared.csproj" />
+    <ProjectReference Include="..\..\Services\Examination\Examination.Application\Examination.Application.csproj" />
     <ProjectReference Include="..\..\Services\Examination\Examination.Domain\Examination.Domain.csproj" />
   </ItemGroup>
 
