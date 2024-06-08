@@ -1,6 +1,8 @@
 ﻿@page "/app/questions"
+
 @using Examination.Shared.Enums
 @using Examination.Shared.Questions
+
 
 @inject IQuestionService QuestionService
 @inject IDialogService DialogService
@@ -79,6 +81,7 @@
     protected override async Task OnInitializedAsync()
     {
         await GetTasks();
+       
     }
 
     public async Task SearchData(QuestionSearch taskListSearch)
@@ -112,8 +115,12 @@
         try
         {
             var pagingResponse = await QuestionService.GetQuestionsPagingAsync(ListSearch);
-            Elements = pagingResponse.Items;
-            MetaData = pagingResponse.MetaData;
+            if (pagingResponse.IsSuccessed)
+            {
+                Elements = pagingResponse.ResultObj.Items;
+                MetaData = pagingResponse.ResultObj.MetaData;
+            }
+
             loading = false;
         }
         catch (Exception ex)
