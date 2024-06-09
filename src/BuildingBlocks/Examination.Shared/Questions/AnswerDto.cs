@@ -12,7 +12,7 @@ namespace Examination.Shared.Questions
         public string Content { get; set; } = string.Empty;
 
         public bool IsCorrect { get; set; }
-        public Guid ClientId { get; set; }
+        public Guid ClientId { get; set; } = Guid.NewGuid();
 
     }
 }

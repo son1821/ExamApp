@@ -17,7 +17,7 @@ namespace AdminApp
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
-
+            builder.Services.AddAutoMapper(typeof(App));
             builder.Services.AddBlazoredSessionStorage();
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
