@@ -1,5 +1,5 @@
 ﻿@page "/app/categories"
-@using Examination.Shared.Categories
+
 @inject ICategoryService CategoryService
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
@@ -51,8 +51,10 @@
 </MudOverlay>
 
 @code {
+
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; } = new MudDialogInstance();
+
 
     [CascadingParameter]
     private Error Error { set; get; } = new Error();
@@ -90,7 +92,7 @@
 
         var dialog = DialogService.Show<ConfirmationDialog>("Delete", parameters, options);
         var result = await dialog.Result;
-        if (!result.Cancelled)
+        if (!result.Canceled)
         {
             await CategoryService.DeleteAsync(DeleteId);
             await GetTasks();
@@ -103,13 +105,12 @@
         try
         {
             var pagingResponse = await CategoryService.GetCategoriesPagingAsync(TaskListSearch);
-            
-            if(pagingResponse.IsSuccessed)
+            if (pagingResponse.IsSuccessed)
             {
                 Elements = pagingResponse.ResultObj.Items;
                 MetaData = pagingResponse.ResultObj.MetaData;
             }
-            
+
             loading = false;
         }
         catch (Exception ex)

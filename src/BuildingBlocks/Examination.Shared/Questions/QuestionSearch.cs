@@ -9,6 +9,7 @@ namespace Examination.Shared.Questions
 {
     public class QuestionSearch : PagingParameters
     {
+        public string CategoryId { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
     }
 }
