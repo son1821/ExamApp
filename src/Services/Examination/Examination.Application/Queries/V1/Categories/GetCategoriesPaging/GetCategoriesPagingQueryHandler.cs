@@ -41,7 +41,7 @@ namespace Examination.Application.Queries.V1.Categories.GetCategoriesPaging
 
             _logger.LogInformation("END: GetCategoriesPagingQueryHandler");
             var pagedItems = new PagedList<CategoryDto>(items, result.MetaData.TotalCount, request.PageIndex, request.PageSize);
-            return new ApiSuccessResult<PagedList<CategoryDto>>(pagedItems);
+            return new ApiSuccessResult<PagedList<CategoryDto>>(200, pagedItems);
         }
     }
 }

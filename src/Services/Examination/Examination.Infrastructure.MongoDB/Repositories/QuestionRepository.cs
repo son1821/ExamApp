@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Examination.Shared.Enums;
 
 namespace Examination.Infrastructure.Repositories
 {
@@ -45,6 +46,14 @@ namespace Examination.Infrastructure.Repositories
                 .ToListAsync();
 
             return new PagedList<Question>(items, totalRow, pageIndex, pageSize);
+        }
+        public async Task<List<Question>> GetRandomQuestionsForExamAsync(string categoryId, Level level, int numberOfQuestions)
+        {
+            var filter = Builders<Question>.Filter.Where(s => s.CategoryId == categoryId && s.Level == level);
+            var items = await Collection.Find(filter)
+                .Limit(numberOfQuestions)
+                .ToListAsync();
+            return items;
         }
     }
 }

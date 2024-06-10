@@ -3,7 +3,9 @@
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager;
+@inject IAuthService AuthService
 @inherits LayoutComponentBase
+
 
 
 <MudThemeProvider Theme="_themeManager.Theme" />
@@ -45,7 +47,7 @@
                 <PersonCard FullName = "@fullName" Class="mt-n2" />
                 <MudDivider Class="mb-2" />
                 <MudListItem Text="Account" Icon="@Icons.Material.Outlined.Person" Href="/personal/account" />
-                <MudListItem Text="Logout" Icon="@Icons.Material.Outlined.Login" Href="/pages/authentication/login" />
+                <MudListItem Text="Logout" Icon="@Icons.Material.Outlined.Login" OnClick="HandleLogout" />
             </ChildContent>
         </MudMenu>
     </MudAppBar>
@@ -98,6 +100,11 @@
     {
         _themeManager = value;
         StateHasChanged();
+    }
+    private async Task HandleLogout()
+    {
+        await AuthService.LogoutAsync();
+        NavigationManager.NavigateTo(UrlConstants.Login);
     }
     protected override async Task OnInitializedAsync()
     {

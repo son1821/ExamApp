@@ -31,7 +31,7 @@ namespace Examination.Application.Commands.V1.Categories.UpdateCategory
             if (itemToUpdate == null)
             {
                 _logger.LogError($"Item is not found {request.Id}");
-                return new ApiErrorResult<bool>("itemToUpdate is not found");
+                return new ApiErrorResult<bool>(200, "itemToUpdate is not found");
             }
 
             itemToUpdate.Name = request.Name;
@@ -40,7 +40,7 @@ namespace Examination.Application.Commands.V1.Categories.UpdateCategory
             await _categoryRepository.UpdateAsync(itemToUpdate);
        
 
-            return new ApiSuccessResult<bool>(true,"Update successful");
+            return new ApiSuccessResult<bool>(200, true,"Update successful");
         }
     }
 }

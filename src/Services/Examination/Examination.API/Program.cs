@@ -1,34 +1,21 @@
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
-using DocumentFormat.OpenXml.Wordprocessing;
+
 using Examination.API;
 using Examination.API.Extensions;
 using Examination.API.Filters;
 using Examination.Application.Commands.V1.Exams.StarExam;
 using Examination.Application.Mapping;
-using Examination.Application.Queries.V1.Exams.GetHomeExamList;
-using Examination.Domain.AggregateModels.CategoryAggregate;
-using Examination.Domain.AggregateModels.ExamAggregate;
-using Examination.Domain.AggregateModels.ExamResultAggregate;
-using Examination.Domain.AggregateModels.QuestionAggregate;
-using Examination.Domain.AggregateModels.UserAggregate;
+using Examination.Application.Queries.V1.Exams.GetAllExams;
 using Examination.Infrastructure;
-using Examination.Infrastructure.Repositories;
 using Examination.Infrastructure.SeedWork;
 using HealthChecks.UI.Client;
-using Humanizer.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using Serilog;
 using System.Net.Mime;
-using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Text.Json;
 
@@ -89,7 +76,7 @@ try
     });
     builder.Services.AddMediatR(cfg =>
     {
-        cfg.RegisterServicesFromAssemblies(typeof(StartExamCommandHandler).Assembly, typeof(GetHomeExamListQueryHandler).Assembly);
+        cfg.RegisterServicesFromAssemblies(typeof(StartExamCommandHandler).Assembly, typeof(GetAllExamsQueryHandler).Assembly);
     });
     builder.Services.AddControllers();
     builder.Services.AddCors(options =>

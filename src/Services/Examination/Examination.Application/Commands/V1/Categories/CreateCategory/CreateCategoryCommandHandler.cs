@@ -37,13 +37,13 @@ namespace Examination.Application.Commands.V1.Categories.CreateCategory
             if (itemToAdd != null)
             {
                 _logger.LogError($"Item name existed: {request.Name}");
-                return new ApiErrorResult<CategoryDto>($"itemToAdd is not found {request.Name} ");
+                return new ApiErrorResult<CategoryDto>(400,$"itemToAdd is not found {request.Name} ");
             }
             itemToAdd = new Category(ObjectId.GenerateNewId().ToString(), request.Name, request.UrlPath);
            
                 await _categoryRepository.InsertAsync(itemToAdd);
                 var result = _mapper.Map<Category, CategoryDto>(itemToAdd);
-                return new ApiSuccessResult<CategoryDto>(result);
+                return new ApiSuccessResult<CategoryDto>(200,result);
            
         }
     }
