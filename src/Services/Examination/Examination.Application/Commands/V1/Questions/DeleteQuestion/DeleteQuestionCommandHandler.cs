@@ -27,11 +27,11 @@ namespace Examination.Application.Commands.V1.Questions.DeleteQuestion
             if (itemToDelete == null)
             {
                 _logger.LogError($"Item is not found {request.Id}");
-                return new ApiErrorResult<bool>($"itemToDelete not found: {request.Id} ");
+                return new ApiErrorResult<bool>(400,$"itemToDelete not found: {request.Id} ");
             }
 
             await _questionRepository.DeleteAsync(request.Id);
-            return new ApiSuccessResult<bool>(true, "Delete successful");
+            return new ApiSuccessResult<bool>(200,true, "Delete successful");
             
           
         }

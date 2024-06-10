@@ -19,6 +19,7 @@ namespace Examination.Infrastructure
 {
     public class ExamMongoDbSeeding
     {
+       
         public async Task SeedAsync(IMongoClient mongoClient, IOptions<ExamSettings> settings,
                       ILogger<ExamMongoDbSeeding> logger)
         {
@@ -59,30 +60,32 @@ namespace Examination.Infrastructure
 
         private List<Exam> GetPredefinedExams(string categoryId1)
         {
+           
             return new List<Exam>()
             {
                 new Exam("Exam 1", "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
                     "<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>",
                     5,
-                    TimeSpan.FromMinutes(10),
-                    GetPredefinedQuestions(categoryId1).Take(5),
+                  10,
+                    GetPredefinedQuestions(categoryId1).Take(5).ToList(),
                     Level.Easy,
                     null,
                     4,
-                    true),
+                    true,null,null),
                 new Exam("Exam 2", "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
                     "<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>",
                     5,
-                    TimeSpan.FromMinutes(5),
-                    GetPredefinedQuestions(categoryId1).Skip(5).Take(5),
+                    5,
+                    GetPredefinedQuestions(categoryId1).Skip(5).Take(5).ToList(),
                     Level.Medium,
                     null,
                     4,
-                    true),
+                    true,null,null),
             };
         }
         private List<Question> GetPredefinedQuestions(string categoryId1)
         {
+          
             return new List<Question>()
             {
                 new("608cd754ef63d3914679ea5b","Question 1", QuestionType.SingleSelection, Level.Easy, categoryId1,

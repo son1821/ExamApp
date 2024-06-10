@@ -36,7 +36,7 @@ namespace Examination.Application.Commands.V1.Exams.StarExam
                     await _examResultRepository.InsertAsync(examResult);
                 }
 
-                return new ApiSuccessResult<bool>(true, "Starting Exam");
+                return new ApiSuccessResult<bool>(200,true, "Starting Exam");
             
           
         }

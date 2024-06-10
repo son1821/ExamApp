@@ -31,12 +31,12 @@ namespace Examination.Application.Commands.V1.Categories.DeleteCategory
             if (itemToDelete == null)
             {
                 _logger.LogError($"Item is not found {request.Id}");
-                return new ApiErrorResult<bool>($"itemToDelete is not found {request.Id}");
+                return new ApiErrorResult<bool>(400, $"itemToDelete is not found {request.Id}");
             }
 
             
                 await _categoryRepository.DeleteAsync(request.Id);
-                return new ApiSuccessResult<bool>(true,"Delete Successful");
+                return new ApiSuccessResult<bool>(200,true,"Delete Successful");
             
         }
     }

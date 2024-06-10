@@ -44,7 +44,7 @@ namespace Examination.Application.Queries.V1.Questions.GetQuestionsPaging
 
             _logger.LogInformation("END: GetQuestionsPagingQueryHandler");
             var pagedItems = new PagedList<QuestionDto>(items, result.MetaData.TotalCount, request.PageIndex, request.PageSize);
-            return new ApiSuccessResult<PagedList<QuestionDto>>(pagedItems);
+            return new ApiSuccessResult<PagedList<QuestionDto>>(200, pagedItems);
         }
     }
 }

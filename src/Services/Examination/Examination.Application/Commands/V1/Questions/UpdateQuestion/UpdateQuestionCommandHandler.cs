@@ -36,7 +36,7 @@ namespace Examination.Application.Commands.V1.Questions.UpdateQuestion
             if (request.Answers?.Count(x => x.IsCorrect) > 1 && request.QuestionType == QuestionType.SingleSelection)
             {
 
-                return new ApiErrorResult<bool>("Single choice question cannot have multiple correct answers.");
+                return new ApiErrorResult<bool>(200, "Single choice question cannot have multiple correct answers.");
             }
             var category = await _categoryRepository.GetCategoriesByIdAsync(request.CategoryId);
 
@@ -55,7 +55,7 @@ namespace Examination.Application.Commands.V1.Questions.UpdateQuestion
             if (itemToUpdate == null)
             {
                 _logger.LogError($"Item is not found {request.Id}");
-                return new ApiErrorResult<bool>($"itemToUpdate is not found {request.Id}");
+                return new ApiErrorResult<bool>(200, $"itemToUpdate is not found {request.Id}");
             }
 
             itemToUpdate.Content = request.Content;
@@ -70,7 +70,7 @@ namespace Examination.Application.Commands.V1.Questions.UpdateQuestion
 
             var result = _mapper.Map<Question, QuestionDto>(itemToUpdate);
 
-            return new ApiSuccessResult<bool>(true,"Update successful");
+            return new ApiSuccessResult<bool>(200, true,"Update successful");
         }
     }
 }
