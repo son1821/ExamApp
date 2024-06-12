@@ -2,7 +2,7 @@
 using Examination.API;
 using Examination.API.Extensions;
 using Examination.API.Filters;
-using Examination.Application.Commands.V1.Exams.StarExam;
+using Examination.Application.Commands.V1.ExamResults.StarExam;
 using Examination.Application.Mapping;
 using Examination.Application.Queries.V1.Exams.GetAllExams;
 using Examination.Infrastructure;
@@ -183,6 +183,7 @@ try
         app.UseSwagger();
         app.UseSwaggerUI(c =>
         {
+            c.OAuthClientId("exam_api_swaggerui");
             c.SwaggerEndpoint("/swagger/v1/swagger.json", "Examination.API v1");
 
             c.SwaggerEndpoint("/swagger/v2/swagger.json", "Examination.API v2");

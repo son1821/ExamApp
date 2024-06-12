@@ -28,7 +28,7 @@ namespace Examination.Application.Commands.V1.Exams.UpdateExam
         [Required]
         public int NumberOfQuestions { get; set; }
 
-        public int? DurationInMinutes { get; set; }
+        public string Duration { get; set; } = string.Empty ;
 
         public List<QuestionDto> Questions { get; set; } = new List<QuestionDto>();
 

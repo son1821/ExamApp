@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Logging;
 using PortalApp.Core;
+using PortalApp.Services;
+using PortalApp.Services.Interfaces;
 
 namespace PortalApp
 {
@@ -21,6 +24,22 @@ namespace PortalApp
                 {
                     options.Cookie.Name = builder.Configuration["IdentityServerConfig:CookieName"];
                     options.LoginPath = "/login.html";
+                    options.Events = new CookieAuthenticationEvents()
+                    {
+                        OnValidatePrincipal = context =>
+                        {
+                            if (context.Properties.Items.ContainsKey(".Token.expires_at"))
+                            {
+                                var expire = DateTime.Parse(context.Properties.Items[".Token.expires_at"]);
+                                if (expire < DateTime.Now)
+                                {
+                                    context.ShouldRenew = true;
+                                    context.RejectPrincipal();
+                                }
+                            }
+                            return Task.FromResult(0);
+                        }
+                    };
                 })
                 .AddOpenIdConnect(AuthenticationConsts.OidcAuthenticationScheme, options =>
                 {
@@ -32,7 +51,12 @@ namespace PortalApp
                     options.RequireHttpsMetadata = false;
                     options.SaveTokens = true;
                 });
-
+            builder.Services.AddHttpClient("BackendApi", options =>
+            {
+                options.BaseAddress = new Uri(builder.Configuration["BackendApiUrl"]);
+            });
+            builder.Services.RegisterCustomServices();
+        
 
             var app = builder.Build();
             IdentityModelEventSource.ShowPII = true;
