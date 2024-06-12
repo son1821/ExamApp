@@ -2,8 +2,10 @@
 using DocumentFormat.OpenXml.Drawing.Diagrams;
 
 using Examination.Domain.AggregateModels.ExamAggregate;
+using Examination.Domain.AggregateModels.ExamResultAggregate;
 using Examination.Domain.AggregateModels.QuestionAggregate;
 using Examination.Shared.Categories;
+using Examination.Shared.ExamResults;
 using Examination.Shared.Exams;
 using Examination.Shared.Questions;
 using System;
@@ -24,7 +26,9 @@ namespace Examination.Application.Mapping
             CreateMap<Category, CategoryDto>().ReverseMap();
             CreateMap<Question, QuestionDto>().ReverseMap();
             CreateMap<Answer, AnswerDto>().ReverseMap();
-            
+            CreateMap<ExamResult, ExamResultDto>().ReverseMap();
+            CreateMap<QuestionResult, QuestionResultDto>().ReverseMap();
+            CreateMap<AnswerResult, AnswerResultDto>().ReverseMap();
         }
     }
 }
