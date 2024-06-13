@@ -37,13 +37,14 @@ namespace Examination.Application.Commands.V1.ExamResults.StarExam
             var examResult = new ExamResult(_httpContextAccessor.GetUserId(), request.ExamId);
 
             examResult.ExamStartDate = DateTime.UtcNow;
+            examResult.ExamTitle = exam.Name;
             if (exam.IsTimeRestricted)
             {
                 var durations = exam.Duration.Split(":");
                 var durationTimeSpan = new TimeSpan(0, int.Parse(durations[0]), int.Parse(durations[1]));
                 examResult.ExamFinishDate = DateTime.UtcNow.Add(durationTimeSpan);
             }
-
+            
             examResult.CorrectQuestionCount = 0;
             examResult.QuestionResults = exam.Questions
                     .Select(x => new QuestionResult(x.Id,

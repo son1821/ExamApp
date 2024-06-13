@@ -3,6 +3,8 @@ using Examination.Application.Commands.V1.ExamResults.SkipExam;
 using Examination.Application.Commands.V1.ExamResults.StarExam;
 using Examination.Application.Commands.V1.ExamResults.SubmitQuestion;
 using Examination.Application.Queries.V1.ExamResults.GetExamResultById;
+using Examination.Application.Queries.V1.ExamResults.GetExamResultsByUserIdPaging;
+using Examination.Application.Queries.V1.Questions.GetQuestionsPaging;
 using Examination.Shared.ExamResults;
 using Examination.Shared.SeedWork;
 using MediatR;
@@ -35,7 +37,18 @@ namespace Examination.API.Controllers.V1
             _logger.LogInformation("END: GetExamResultByIdAsync");
             return StatusCode(result.StatusCode, result);
         }
+        [HttpGet("user")]
+        [ProducesResponseType(typeof(ApiSuccessResult<ExamResultDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetExamResultByIdPagingAsync([FromQuery] GetExamResultsByUserIdPagingQuery query)
+        {
+            _logger.LogInformation("BEGIN: GetExamResultByIdPagingAsync");
 
+            var result = await _mediator.Send(query);
+
+            _logger.LogInformation("END: GetExamResultByIdPagingAsync");
+            return StatusCode(result.StatusCode, result);
+        }
         [HttpPost("finish")]
         [ProducesResponseType(typeof(ApiSuccessResult<ExamResultDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
