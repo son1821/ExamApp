@@ -11,5 +11,6 @@ namespace Examination.Shared.ExamResults
         public string Id { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty; 
         public bool? UserChosen { get; set; }
+        public bool IsCorrect { get; set; }
     }
 }
