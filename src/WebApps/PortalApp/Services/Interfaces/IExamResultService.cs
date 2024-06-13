@@ -7,6 +7,7 @@ namespace PortalApp.Services.Interfaces
     public interface IExamResultService
     {
         Task<ApiResult<ExamResultDto>> GetExamResultByIdAsync(string id);
+        Task<ApiResult<PagedList<ExamResultDto>>> GetExamResultsByUserIdPagingAsync(PagingParameters request);
         Task<ApiResult<ExamResultDto>> FinishExamAsync(FinishExamRequest request);
         Task<ApiResult<bool>> SkipExamAsync(SkipExamRequest request);
         Task<ApiResult<ExamResultDto>> NextQuestionAsync(NextQuestionRequest request);

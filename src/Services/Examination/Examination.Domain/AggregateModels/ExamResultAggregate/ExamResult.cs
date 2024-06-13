@@ -20,6 +20,9 @@ namespace Examination.Domain.AggregateModels.ExamResultAggregate
         [BsonElement("userId")]
         public string UserId { set; get; }
 
+        [BsonElement("examTitle")]
+        public string ExamTitle { set; get; }
+
         [BsonElement("questionResults ")]
         public List<QuestionResult> QuestionResults { get; set; }
 

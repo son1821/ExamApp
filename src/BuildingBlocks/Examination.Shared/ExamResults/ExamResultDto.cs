@@ -11,6 +11,7 @@ namespace Examination.Shared.ExamResults
         public string Id { set; get; } = string.Empty;
         public string ExamId { get; set; } = string.Empty;
 
+        public string ExamTitle {  set; get; } = string.Empty;
         public string UserId { set; get; } = string.Empty;
 
         public List<QuestionResultDto> QuestionResults { get; set; } = new List<QuestionResultDto>();
