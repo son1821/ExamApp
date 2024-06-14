@@ -4,6 +4,7 @@ using Examination.Application.Commands.V1.ExamResults.StarExam;
 using Examination.Application.Commands.V1.ExamResults.SubmitQuestion;
 using Examination.Application.Queries.V1.ExamResults.GetExamResultById;
 using Examination.Application.Queries.V1.ExamResults.GetExamResultsByUserIdPaging;
+using Examination.Application.Queries.V1.ExamResults.GetExamResultsPaging;
 using Examination.Application.Queries.V1.Questions.GetQuestionsPaging;
 using Examination.Shared.ExamResults;
 using Examination.Shared.SeedWork;
@@ -47,6 +48,18 @@ namespace Examination.API.Controllers.V1
             var result = await _mediator.Send(query);
 
             _logger.LogInformation("END: GetExamResultByIdPagingAsync");
+            return StatusCode(result.StatusCode, result);
+        }
+        [HttpGet("paging")]
+        [ProducesResponseType(typeof(ApiSuccessResult<ExamResultDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetExamResultsPagingAsync([FromQuery] GetExamResultsPagingQuery query)
+        {
+            _logger.LogInformation("BEGIN: GetExamResultsPagingAsync");
+
+            var result = await _mediator.Send(query);
+
+            _logger.LogInformation("END: GetExamResultsPagingAsync");
             return StatusCode(result.StatusCode, result);
         }
         [HttpPost("finish")]
