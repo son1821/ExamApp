@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 using MudBlazor;
 
+
 namespace AdminApp
 {
     public class Program
@@ -24,6 +25,7 @@ namespace AdminApp
             builder.Services.AddScoped<IQuestionService, QuestionService>();
             builder.Services.AddScoped<IExamService, ExamService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IExamResultService, ExamResultService>();
             builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
 
             builder.Services.AddScoped(sp => new HttpClient { 
